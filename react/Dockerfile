@@ -1,6 +1,6 @@
-FROM node:8
+FROM node: 8
 
-#Alpine APK Manager had build issues so replaced them.
+# APK is the alpine-pakage-manager Python gcc is need for node-sass
 RUN apt-get update && apt-get install -y build-essential python
 
 #Install deps

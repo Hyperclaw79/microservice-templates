@@ -1,4 +1,4 @@
-FROM java:8 
+FROM 9.0.1-11-jre-slim 
 
 # Install maven
 RUN apt-get update

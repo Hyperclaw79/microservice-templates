@@ -1,4 +1,4 @@
-FROM microsoft/dotnet:1.1-sdk-msbuild
+FROM microsoft/dotnet:latest
 RUN mkdir /src
 WORKDIR /src
 ADD app/src/ /src
