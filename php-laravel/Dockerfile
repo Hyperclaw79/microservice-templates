@@ -1,8 +1,8 @@
 #start with our base image (the foundation) - version 7.1.5
-FROM php:7.1.12-apache-jessie
+FROM php:7.1.5-apache
 
-#install all the system dependencies and enable PHP modules 
-RUN apt-get update && apt-get install -y \  
+#install all the system dependencies and enable PHP modules
+RUN apt-get update && apt-get install -y \
       libicu-dev \
       libpq-dev \
       libmcrypt-dev \
@@ -12,6 +12,7 @@ RUN apt-get update && apt-get install -y \
     && rm -r /var/lib/apt/lists/* \
     && docker-php-ext-install \
       intl \
+      mbstring \
       mcrypt \
       pcntl \
       pdo_pgsql \
@@ -37,8 +38,8 @@ RUN a2enmod rewrite
 #copy the composer dependencies only
 COPY app/composer.json $APP_HOME/composer.json
 
-#Let docker run composer as superuser.
-ENV COMPOSER_ALLOW_SUPERUSER=1
+# Install all PHP dependencies without the autoloader
+RUN composer install --no-ansi --no-dev --no-interaction --no-autoloader
 
 #set the port to 8080
 RUN sed -i -e "s/VirtualHost \*:80/VirtualHost *:8080/g" /etc/apache2/sites-enabled/000-default.conf
@@ -48,7 +49,7 @@ RUN sed -i -e "s/Listen 80/Listen 8080/g" /etc/apache2/ports.conf
 COPY app $APP_HOME/
 
 # install all PHP dependencies
-RUN composer install --no-ansi --no-dev --no-interaction --no-scripts --optimize-autoloader \
+RUN composer install --no-ansi --no-dev --no-interaction --optimize-autoloader \
             && rm -rf /root/.composer/cache
 
 #change ownership of our applications
